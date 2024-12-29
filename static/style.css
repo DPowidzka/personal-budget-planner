@@ -1,0 +1,59 @@
+/* Base Styles */
+body {
+	font-family: 'Arial', sans-serif;
+	background-color: #f4f5f7; /* Light gray background */
+	color: #333; /* Dark text color for better readability */
+}
+
+/* Sidebar Styles */
+.sidebar {
+	background-color: #ffffffe2; /* Light grey background */
+	color: #14213d;
+	border-radius: 12px; /* Rounded corners */
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Soft shadow */
+	padding: 15px; /* Padding for better spacing */
+	overflow: hidden; /* Ensures content stays within rounded corners */
+}
+
+.logo {
+	margin-top: 13px;
+	font-size: 1.6rem;
+	font-weight: bold;
+	color: #14213d;
+	/* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); */
+}
+
+/* Navigation Links */
+.nav-link {
+	color: #023047 !important;
+	font-size: 1rem;
+	border-radius: 4px;
+	transition: all 0.3s ease;
+}
+
+.nav-link i {
+	margin-right: 8px;
+	font-size: 1.2rem;
+}
+
+.nav-link:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+	text-decoration: none;
+}
+
+/* Main Content Styles */
+.content {
+	background-color: #e5e5e5; /* White background for the main content area */
+	border-radius: 10px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.content h1 {
+	color: #023047; /* Primary theme color */
+	font-weight: bold;
+	font-size: 1.3rem;
+}
+
+.content p {
+	color: #555; /* Secondary text color */
+}
