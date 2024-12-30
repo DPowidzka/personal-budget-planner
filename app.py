@@ -17,6 +17,24 @@ def dashboard():
 def transactions():
     return render_template('transactions.html')
 
+@app.route('/add-transaction', methods=['GET', 'POST'])
+def add_transaction():
+    if request.method == 'POST':
+        # Logic for adding a new transaction (e.g., saving to the database)
+        transaction_name = request.form['name']
+        transaction_date = request.form['date']
+        transaction_category = request.form['category']
+        transaction_value = request.form['value']
+
+        # Save to database (pseudo-code)
+        # db.add_transaction(name=transaction_name, date=transaction_date, ...)
+
+        return redirect(url_for('transactions'))
+
+    # Render the Add Transaction form
+    return render_template('add_transaction.html')
+
+
 
 @app.route('/budget-planner')
 def budget_planner():

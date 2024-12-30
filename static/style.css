@@ -102,20 +102,40 @@ body {
 	font-weight: bold;
 }
 
+/* Transactions Table */
 .table {
-	width: 100%;
-	margin: 0;
+	width: 100%; /* Table adjusts to container width */
+	max-width: 100%; /* Prevents the table from expanding beyond its container */
+	table-layout: auto; /* Allows the browser to manage column widths */
+	overflow-x: auto; /* Add horizontal scroll inside the table if necessary */
+	border-collapse: collapse;
 }
-
-.table th {
-	text-align: left;
+.table-header {
+	background-color: #f4f5f7; /* Light grey background for headings */
 	color: #333;
 	font-weight: bold;
+	border-bottom: 2px solid #ddd;
 }
 
 .table td {
-	color: #555;
+	color: #555; /* Standardized text color for table rows */
 	vertical-align: middle;
+	border: none;
+}
+
+.table th {
+	text-align: left; /* Align headings to the left */
+	border: none;
+}
+
+/* Table Hover Effect */
+.table tr:hover {
+	background-color: #f8f9fa; /* Light hover effect for better interactivity */
+}
+
+/* Button and Input Alignment */
+.d-flex {
+	gap: 10px; /* Adds spacing between elements in flex containers */
 }
 
 .table td .bi {
@@ -172,16 +192,45 @@ body {
 	border-radius: 5px;
 }
 
-/* Sidebar Styles */
+/* Sidebar */
 .sidebar {
-	background-color: #ffffffe2; /* Light grey background */
-	color: #14213d; /* Updated text color in the sidebar */
-	border-radius: 12px; /* Rounded corners */
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Soft shadow */
-	padding: 10px; /* Padding for better spacing */
-	overflow: hidden; /* Ensures content stays within rounded corners */
+	background-color: #f8f9fa; /* Light grey background */
+	color: #14213d; /* Text color */
+	border-right: 1px solid #ddd;
 	height: 100vh; /* Full viewport height */
-	position: fixed; /* Fix it to the side of the screen */
+	overflow-y: auto; /* Scrollable if content overflows */
+	overflow-x: hidden;
+	max-width: 250px;
+	flex: 0 0 250px;
+	box-sizing: border-box;
+}
+.sidebar .logo {
+	font-size: 1.5rem;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+.sidebar ul {
+	list-style: none;
+	padding: 0;
+}
+
+.sidebar ul li {
+	margin: 15px 0;
+}
+
+.sidebar ul li a {
+	color: #14213d;
+	text-decoration: none;
+	font-size: 1rem;
+	padding: 10px 15px;
+	display: block;
+	border-radius: 4px;
+	transition: background-color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+	background-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Navigation Links */
@@ -202,13 +251,24 @@ body {
 	text-decoration: none;
 }
 
-/* Main Content Styles */
+/* Main Content */
 .content {
-	margin-left: 250px; /* Adjust this based on your sidebar width */
-	background-color: #ffffffa9; /* White background for the main content area */
+	flex: 1;
+	min-width: 0;
+	background-color: #ffffff; /* White background */
 	border-radius: 10px;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	padding: 20px; /* Add padding for readability */
+	box-sizing: border-box;
+	width: 100%;
+	padding: 20px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.content-title {
+	color: #023047;
+	font-weight: bold;
+	margin-bottom: 20px;
 }
 
 .content h1 {
@@ -227,4 +287,83 @@ body {
 	padding: 20px;
 	margin-bottom: 10px; /* Space below the heading */
 	color: #14213d; /* Ensure it matches the theme */
+}
+/* General Button and Input Alignment */
+form .form-control,
+.form-select,
+.btn-success,
+.btn-primary {
+	height: 40px; /* Ensure consistent height across elements */
+	line-height: 40px; /* Align text vertically within elements */
+	padding: 0 15px; /* Add padding for a consistent appearance */
+	font-size: 1rem; /* Consistent font size */
+	border-radius: 5px; /* Match border radius for buttons */
+	box-sizing: border-box; /* Include padding and border in height */
+}
+
+/* Adjust Button Specific Styles */
+.btn-success,
+.btn-primary {
+	display: inline-block; /* Align buttons inline */
+	height: 40px; /* Match input and dropdown height */
+	padding: 0 20px; /* Add padding for buttons */
+	font-size: 1rem; /* Ensure font size matches inputs */
+	font-weight: bold; /* Optionally make the text bold */
+	border-radius: 5px; /* Ensure rounded corners match */
+}
+.btn-success {
+	background-color: #fca311; /* Set the background color */
+	border-color: #fca311; /* Set the border color */
+	color: white; /* Text color */
+	transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.btn-success:hover {
+	background-color: #d98c0a; /* Slightly darker shade for hover */
+	border-color: #d98c0a; /* Match border color on hover */
+}
+
+.btn-success:active {
+	background-color: #b37408; /* Even darker shade for active state */
+	border-color: #b37408; /* Match border color for active state */
+	box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2); /* Inner shadow for active press effect */
+}
+
+/* Flex Container for Alignment */
+.d-flex {
+	gap: 10px; /* Spacing between elements */
+	align-items: center; /* Vertical alignment for elements */
+}
+
+/* Dropdown Menu Styling */
+.form-select {
+	display: inline-block; /* Allow alignment with other elements */
+	height: 40px; /* Match height of inputs and buttons */
+	padding: 0 15px; /* Add padding */
+	font-size: 1rem; /* Font size consistency */
+	border-radius: 5px; /* Rounded corners */
+	box-sizing: border-box; /* Include padding and border in height */
+}
+
+/* Search Bar */
+form .form-control {
+	display: inline-block; /* Align with buttons and dropdowns */
+	height: 40px; /* Match other elements */
+	padding: 0 15px; /* Inner padding for a clean look */
+	font-size: 1rem; /* Uniform font size */
+	border-radius: 5px; /* Rounded corners */
+	box-sizing: border-box; /* Include padding and border in height */
+}
+
+.container-fluid {
+	width: 100%; /* Ensure the container doesn't exceed viewport width */
+	height: 100%;
+	overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+.row {
+	height: 100%;
+	display: flex;
+	flex-wrap: nowrap; /* Prevent row wrapping, keeps layout intact */
+	margin: 0; /* Remove default margin that might cause overflow */
 }
