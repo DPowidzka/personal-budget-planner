@@ -22,7 +22,7 @@ class BudgetDatabase:
         """Pobiera wszystkie transakcje z bazy danych"""
         try:
             query = """
-                SELECT 
+                SELECT
                     t.transaction_id,
                     t.amount,
                     t.transaction_date,
@@ -42,19 +42,19 @@ class BudgetDatabase:
             print(f"Błąd podczas pobierania transakcji: {e}")
             return []
 
-    def add_transaction(self, account_id, category_id, transaction_type_id, 
+    def add_transaction(self, account_id, category_id, transaction_type_id,
                        amount, description):
         """Dodaje nową transakcję do bazy danych"""
         try:
             query = """
-                INSERT INTO Transactions 
-                (account_id, category_id, transaction_type_id, amount, 
+                INSERT INTO Transactions
+                (account_id, category_id, transaction_type_id, amount,
                  transaction_date, description)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """
-            values = (account_id, category_id, transaction_type_id, amount, 
+            values = (account_id, category_id, transaction_type_id, amount,
                      datetime.now().date(), description)
-            
+
             self.cursor.execute(query, values)
             self.connection.commit()
             print("Transakcja została dodana pomyślnie")
@@ -75,13 +75,13 @@ class BudgetDatabase:
             print(f"Błąd podczas pobierania salda: {e}")
             return None
 
-    def search_transactions(self, start_date=None, end_date=None, 
+    def search_transactions(self, start_date=None, end_date=None,
                           category_id=None, min_amount=None):
         """Wyszukuje transakcje według określonych kryteriów"""
         try:
             conditions = []
             values = []
-            
+
             query = """
                 SELECT t.*, c.name as category_name, a.name as account_name
                 FROM Transactions t
@@ -89,7 +89,7 @@ class BudgetDatabase:
                 JOIN Accounts a ON t.account_id = a.account_id
                 WHERE 1=1
             """
-            
+
             if start_date:
                 conditions.append("t.transaction_date >= %s")
                 values.append(start_date)
@@ -102,14 +102,38 @@ class BudgetDatabase:
             if min_amount:
                 conditions.append("t.amount >= %s")
                 values.append(min_amount)
-            
+
             if conditions:
                 query += " AND " + " AND ".join(conditions)
-            
+
             self.cursor.execute(query, tuple(values))
             return self.cursor.fetchall()
         except Error as e:
             print(f"Błąd podczas wyszukiwania transakcji: {e}")
+            return []
+
+    def get_all_accounts(self):
+        """Fetch all accounts with their balances"""
+        try:
+            query = """
+                SELECT account_id, name, current_balance FROM Accounts
+            """
+            self.cursor.execute(query)
+            return self.cursor.fetchall()
+        except Error as e:
+            print(f"Błąd podczas pobierania kont: {e}")
+            return []
+
+    def get_all_categories(self):
+        """Fetch all categories"""
+        try:
+            query = """
+                SELECT category_id, name FROM Categories
+            """
+            self.cursor.execute(query)
+            return self.cursor.fetchall()
+        except Error as e:
+            print(f"Błąd podczas pobierania kategorii: {e}")
             return []
 
     def close(self):

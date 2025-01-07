@@ -1,6 +1,9 @@
-from flask import Flask, render_template
-
+from flask import Flask, render_template, request, redirect, url_for
+from models.database import BudgetDatabase
 app = Flask(__name__, static_folder="static")
+
+# Initialize database connection (update credentials as needed)
+db = BudgetDatabase(host="localhost", user="root", password="PracaProjekt00#", database="budget_tracker")
 
 
 @app.route('/')
@@ -10,30 +13,40 @@ def login():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    # Fetch accounts and their balances
+    accounts = db.get_all_accounts()  # return all accounts with current balances
+    return render_template('dashboard.html', accounts=accounts)
 
 
 @app.route('/transactions')
 def transactions():
-    return render_template('transactions.html')
+    # Fetch all transactions
+    transactions = db.get_all_transactions()
+    return render_template('transactions.html', transactions=transactions)
+
 
 @app.route('/add-transaction', methods=['GET', 'POST'])
 def add_transaction():
     if request.method == 'POST':
-        # Logic for adding a new transaction (e.g., saving to the database)
-        transaction_name = request.form['name']
-        transaction_date = request.form['date']
-        transaction_category = request.form['category']
-        transaction_value = request.form['value']
+        # Extract form data
+        account_id = request.form['account_id']
+        category_id = request.form['category_id']
+        transaction_type_id = request.form['transaction_type_id']
+        amount = float(request.form['amount'])
+        description = request.form.get('description', '')
 
-        # Save to database (pseudo-code)
-        # db.add_transaction(name=transaction_name, date=transaction_date, ...)
+        # Add transaction to the database
+        success = db.add_transaction(account_id, category_id, transaction_type_id, amount, description)
 
-        return redirect(url_for('transactions'))
+        if success:
+            return redirect(url_for('transactions'))
+        else:
+            return "Failed to add transaction. Please try again."
 
-    # Render the Add Transaction form
-    return render_template('add_transaction.html')
-
+    # Fetch accounts and categories for the form
+    accounts = db.get_all_accounts()
+    categories = db.get_all_categories()
+    return render_template('add_transaction.html', accounts=accounts, categories=categories)
 
 
 @app.route('/budget-planner')
