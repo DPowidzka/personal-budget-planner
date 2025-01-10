@@ -11,7 +11,6 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -147,6 +146,126 @@ INSERT INTO `transactiontypes` (`transaction_type_id`, `name`) VALUES
 (1, 'WYDATEK'),
 (2, 'DOCHÓD');
 
+-- --------------------------------------------------------
+
+--
+-- Struktura dla widoku `v_szczegoly_transakcji`
+--
+
+CREATE VIEW v_szczegoly_transakcji AS
+SELECT 
+    t.transaction_id AS id_transakcji,
+    t.account_id AS id_konta,
+    a.name AS nazwa_konta,
+    t.category_id AS id_kategorii,
+    c.name AS nazwa_kategorii,
+    c.icon_type AS ikona_kategorii,
+    t.transaction_type_id AS id_typu_transakcji,
+    tt.name AS typ_transakcji,
+    t.amount AS kwota,
+    t.transaction_date AS data_transakcji,
+    t.description AS opis,
+    t.is_recurring AS czy_cykliczna
+FROM transactions t
+JOIN accounts a ON t.account_id = a.account_id
+JOIN categories c ON t.category_id = c.category_id
+JOIN transactiontypes tt ON t.transaction_type_id = tt.transaction_type_id;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura dla widoku `v_podsumowanie_kategorii`
+--
+
+CREATE VIEW v_podsumowanie_kategorii AS
+SELECT 
+    c.category_id AS id_kategorii,
+    c.name AS nazwa_kategorii,
+    c.icon_type AS ikona_kategorii,
+    tt.transaction_type_id AS id_typu_transakcji,
+    tt.name AS typ_transakcji,
+    COUNT(*) AS liczba_transakcji,
+    SUM(t.amount) AS suma_kwot
+FROM categories c
+JOIN transactions t ON c.category_id = t.category_id
+JOIN transactiontypes tt ON t.transaction_type_id = tt.transaction_type_id
+GROUP BY c.category_id, c.name, c.icon_type, tt.transaction_type_id, tt.name;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura dla widoku `v_miesieczne_podsumowanie`
+--
+
+CREATE VIEW v_miesieczne_podsumowanie AS
+SELECT 
+    DATE_FORMAT(t.transaction_date, '%Y-%m') AS miesiac,
+    tt.transaction_type_id AS id_typu_transakcji,
+    tt.name AS typ_transakcji,
+    COUNT(*) AS liczba_transakcji,
+    SUM(t.amount) AS suma_kwot
+FROM transactions t
+JOIN transactiontypes tt ON t.transaction_type_id = tt.transaction_type_id
+GROUP BY DATE_FORMAT(t.transaction_date, '%Y-%m'), tt.transaction_type_id, tt.name;
+
+-- --------------------------------------------------------
+
+--
+-- Procedura do filtrowania transakcji
+--
+
+DELIMITER //
+
+CREATE PROCEDURE sp_filtruj_transakcje(
+    IN p_data_od DATE,
+    IN p_data_do DATE,
+    IN p_id_kategorii INT,
+    IN p_id_typu_transakcji INT
+)
+BEGIN
+    SELECT *
+    FROM v_szczegoly_transakcji
+    WHERE (p_data_od IS NULL OR data_transakcji >= p_data_od)
+    AND (p_data_do IS NULL OR data_transakcji <= p_data_do)
+    AND (p_id_kategorii IS NULL OR id_kategorii = p_id_kategorii)
+    AND (p_id_typu_transakcji IS NULL OR id_typu_transakcji = p_id_typu_transakcji)
+    ORDER BY data_transakcji DESC, id_transakcji DESC;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Procedura do podsumowania transakcji według kategorii w zakresie dat
+--
+
+DELIMITER //
+
+CREATE PROCEDURE sp_podsumowanie_kategorii_w_okresie(
+    IN p_data_od DATE,
+    IN p_data_do DATE
+)
+BEGIN
+    SELECT 
+        c.category_id AS id_kategorii,
+        c.name AS nazwa_kategorii,
+        c.icon_type AS ikona_kategorii,
+        tt.transaction_type_id AS id_typu_transakcji,
+        tt.name AS typ_transakcji,
+        COUNT(*) AS liczba_transakcji,
+        SUM(t.amount) AS suma_kwot
+    FROM categories c
+    JOIN transactions t ON c.category_id = t.category_id
+    JOIN transactiontypes tt ON t.transaction_type_id = tt.transaction_type_id
+    WHERE (p_data_od IS NULL OR t.transaction_date >= p_data_od)
+    AND (p_data_do IS NULL OR t.transaction_date <= p_data_do)
+    GROUP BY c.category_id, c.name, c.icon_type, tt.transaction_type_id, tt.name
+    ORDER BY suma_kwot DESC;
+END //
+
+DELIMITER ;
+
 --
 -- Indeksy dla zrzutów tabel
 --
@@ -177,7 +296,8 @@ ALTER TABLE `transactions`
   ADD PRIMARY KEY (`transaction_id`),
   ADD KEY `account_id` (`account_id`),
   ADD KEY `category_id` (`category_id`),
-  ADD KEY `transaction_type_id` (`transaction_type_id`);
+  ADD KEY `transaction_type_id` (`transaction_type_id`),
+  ADD KEY `idx_transaction_date` (`transaction_date`);
 
 --
 -- Indeksy dla tabeli `transactiontypes`
@@ -190,52 +310,58 @@ ALTER TABLE `transactiontypes`
 --
 
 --
--- AUTO_INCREMENT for table `accounts`
+-- AUTO_INCREMENT dla tabeli `accounts`
 --
 ALTER TABLE `accounts`
   MODIFY `account_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `accounttypes`
+-- AUTO_INCREMENT dla tabeli `accounttypes`
 --
 ALTER TABLE `accounttypes`
   MODIFY `account_type_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `categories`
+-- AUTO_INCREMENT dla tabeli `categories`
 --
 ALTER TABLE `categories`
   MODIFY `category_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `transactions`
+-- AUTO_INCREMENT dla tabeli `transactions`
 --
 ALTER TABLE `transactions`
   MODIFY `transaction_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `transactiontypes`
+-- AUTO_INCREMENT dla tabeli `transactiontypes`
 --
 ALTER TABLE `transactiontypes`
   MODIFY `transaction_type_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- Constraints for dumped tables
+-- Ograniczenia dla zrzutów tabel
 --
 
 --
--- Constraints for table `accounts`
+-- Ograniczenia dla tabeli `accounts`
 --
 ALTER TABLE `accounts`
   ADD CONSTRAINT `accounts_ibfk_1` FOREIGN KEY (`account_type_id`) REFERENCES `accounttypes` (`account_type_id`);
 
 --
--- Constraints for table `transactions`
+-- Ograniczenia dla tabeli `transactions`
 --
 ALTER TABLE `transactions`
   ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`),
   ADD CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`),
   ADD CONSTRAINT `transactions_ibfk_3` FOREIGN KEY (`transaction_type_id`) REFERENCES `transactiontypes` (`transaction_type_id`);
+
+--
+-- Dodatkowy indeks dla optymalizacji filtrowania po dacie
+--
+ALTER TABLE `transactions` ADD INDEX `idx_transaction_date` (`transaction_date`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
