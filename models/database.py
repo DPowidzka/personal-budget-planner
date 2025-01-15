@@ -9,7 +9,7 @@ class BudgetDatabase:
             self.connection = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="PracaProjekt00#",
+                password="mysql!",
                 database="budget_tracker"
             )
             print("Pomyślnie połączono z bazą danych")
@@ -17,6 +17,10 @@ class BudgetDatabase:
         except Error as e:
             print(f"Błąd podczas łączenia z bazą danych: {e}")
             raise
+
+    def is_connected(self):
+        """Check if the database connection is open"""
+        return self.connection.is_connected()
 
     def get_all_transactions(self):
         """Pobiera wszystkie transakcje z bazy danych"""
