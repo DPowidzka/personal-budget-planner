@@ -128,11 +128,9 @@ body {
 	border: none;
 }
 
-
 .table tr:hover {
 	background-color: #f8f9fa;
 }
-
 
 .d-flex {
 	gap: 10px;
@@ -301,7 +299,6 @@ form .form-control,
 	box-sizing: border-box;
 }
 
-
 .btn-success,
 .btn-primary {
 	display: inline-block;
@@ -365,5 +362,22 @@ form .form-control {
 	height: 100%;
 	display: flex;
 	flex-wrap: nowrap;
+	margin: 0;
+}
+
+.form-container {
+	background: white;
+	padding: 2rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	max-width: 400px;
+	width: 100%;
+}
+.form {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background-color: #f8f9fa;
 	margin: 0;
 }

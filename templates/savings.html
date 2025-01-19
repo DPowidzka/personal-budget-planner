@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Savings{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="content-title">Savings</h2>
+    <div class="row">
+        <div class="col-10">
+            <p>Plan your savings effectively. Stay on track and achieve your goals.</p>
+        </div>
+        <div class="col"><a href="{{ url_for('add_savings') }}" class="btn btn-success">Add Savings</a>
+        </div>
+    </div>
+
+
+    <!-- Budget Savings Progress Section -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Savings Progress</h5>
+            <div class="savings">
+                {% for goal in savings_goals %}
+                <div class="saving-item">
+                    <h6>Goal: {{ goal.goal_name }}</h6>
+                    <small>Amount: ${{ goal.goal_amount }}</small>
+                    <div class="progress mt-2">
+                        {% set progress = (goal.saved_amount / goal.goal_amount) * 100%}
+                        <div class="progress-bar" style="width: {{ progress }}%;" role="progressbar"
+                            aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p class="mt-2">${{ goal.saved_amount }} saved</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

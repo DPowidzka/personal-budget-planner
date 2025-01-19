@@ -162,13 +162,24 @@ INSERT INTO `transactiontypes` (`transaction_type_id`, `name`) VALUES
 (2, 'DOCHÓD');
 
 -- --------------------------------------------------------
+-- 'Savings table
+CREATE TABLE savings_goals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    goal_name VARCHAR(255) NOT NULL,
+    goal_amount DECIMAL(10, 2) NOT NULL,
+    saved_amount DECIMAL(10, 2) DEFAULT 0
+    target_date DATE NOT NULL,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 --
 -- Struktura dla widoku `v_szczegoly_transakcji`
 --
 
 CREATE VIEW v_szczegoly_transakcji AS
-SELECT 
+SELECT
     t.transaction_id AS id_transakcji,
     t.account_id AS id_konta,
     a.name AS nazwa_konta,
@@ -193,7 +204,7 @@ JOIN transactiontypes tt ON t.transaction_type_id = tt.transaction_type_id;
 --
 
 CREATE VIEW v_podsumowanie_kategorii AS
-SELECT 
+SELECT
     c.category_id AS id_kategorii,
     c.name AS nazwa_kategorii,
     c.icon_type AS ikona_kategorii,
@@ -213,7 +224,7 @@ GROUP BY c.category_id, c.name, c.icon_type, tt.transaction_type_id, tt.name;
 --
 
 CREATE VIEW v_miesieczne_podsumowanie AS
-SELECT 
+SELECT
     DATE_FORMAT(t.transaction_date, '%Y-%m') AS miesiac,
     tt.transaction_type_id AS id_typu_transakcji,
     tt.name AS typ_transakcji,
@@ -262,7 +273,7 @@ CREATE PROCEDURE sp_podsumowanie_kategorii_w_okresie(
     IN p_data_do DATE
 )
 BEGIN
-    SELECT 
+    SELECT
         c.category_id AS id_kategorii,
         c.name AS nazwa_kategorii,
         c.icon_type AS ikona_kategorii,

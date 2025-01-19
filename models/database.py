@@ -140,6 +140,32 @@ class BudgetDatabase:
             print(f"Błąd podczas pobierania kategorii: {e}")
             return []
 
+    def add_savings(self, goal_name, goal_amount, target_date):
+        query = """
+            INSERT INTO savings_goals (goal_name, goal_amount, target_date, user_id)
+            VALUES (%s, %s, %s, %s)
+        """
+        try:
+            self.cursor.execute(query, (goal_name, goal_amount, target_date, session['user_id']))
+            self.connection.commit()
+            return True
+        except Exception as e:
+            print(f"Error adding savings goal: {e}")
+            self.connection.rollback()
+            return False
+
+    def get_savings_goal(self):
+        """Fetch savings goals from the database."""
+        query = """
+        SELECT goal_name, goal_amount, saved_amountFROM savings_goals"""
+        try:
+            self.cursor.execute(query)
+            return self.cursor.fetchall()
+        except Exception as e:
+            print(f"Błąd przy pobieraniu danych: {e}")
+            return []
+
+
     def close(self):
         """Zamyka połączenie z bazą danych"""
         if self.connection.is_connected():

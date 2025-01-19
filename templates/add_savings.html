@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Add Goal{% endblock %}
+
+{% block content %}
+<h1>Add New Goal</h1>
+
+<div class="form">
+
+
+    <div class="form-container">
+        <div>
+            <img src="{{ url_for('static', filename='images/piggy.jpg') }}" class="img-fluid" alt="piggy">
+        </div>
+        <form method="POST" action="{{ url_for('add_savings') }}">
+            <div class="mb-3">
+                <label for="goalName" class="form-label">Goal Name</label>
+                <input type="text" class="form-control" id="goalName" name="goal_name" required>
+            </div>
+            <div class="mb-3">
+                <label for="goalAmount" class="form-label">Goal Amount</label>
+                <input type="number" class="form-control" id="goalAmount" name="goal_amount" step="0.01" required>
+            </div>
+            <div class="mb-3">
+                <label for="targetDate" class="form-label">Target Date</label>
+                <input type="date" class="form-control" id="targetDate" name="target_date" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

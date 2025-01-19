@@ -135,9 +135,51 @@ def add_transaction():
 def budget_planner():
     return render_template('budget-planner.html')
 
-@app.route('/goals')
-def reports():
-    return render_template('goals.html')
+@app.route('/savings')
+def savings():
+    if 'user_id' not in session:
+        flash("You must log in to access this page.", 'warning')
+        return redirect('login.html')
+
+    savings_goals = db.get_savings_goal()
+
+    return render_template('savings.html', savings=savings)
+
+# Add savings route
+@app.route('/add_savings', methods=['GET', 'POST'])
+def add_savings():
+    if 'user_id' not in session:
+        flash("You must log in to access this page.", 'warning')
+        return redirect(url_for('login'))
+
+    if request.method == 'GET':
+        return render_template('add_savings.html')
+
+    goal_name = request.form.get('goal_name')
+    goal_amount = request.form.get('goal_amount')
+    target_date = request.form.get('target_date')
+
+    if not all([goal_name, goal_amount, target_date]):
+        flash("All fields are required.", 'danger')
+        return redirect(url_for('add_savings'))
+
+    try:
+        goal_amount = float(goal_amount)
+    except ValueError:
+        flash("Invalid goal amount.", 'danger')
+        return redirect(url_for('add_savings'))
+
+    # Insert into database
+    success = db.add_savings(goal_name, goal_amount, target_date)
+
+    if success:
+        flash("Savings goal created successfully!", 'success')
+        return redirect(url_for('savings'))
+    else:
+        flash("Failed to create savings goal. Please try again.", 'danger')
+
+    return render_template('add_savings.html')
+
 
 @app.route('/logout')
 def logout():
