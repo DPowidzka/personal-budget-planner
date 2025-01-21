@@ -59,7 +59,7 @@ class User:
                 return user
             else:
                 logging.debug("Authentication failed. Invalid username or password.")
-                return None  
+                return None
 
         except Exception as e:
             logging.error(f"Error in authenticate_user method: {e}")
