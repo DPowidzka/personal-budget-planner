@@ -36,7 +36,7 @@ def signup():
 
         if user_id:
             # If user is successfully created, show the success page with user_id
-            flash(f"User created successfully! Your user ID is {user_id}.", 'success')
+            flash(f"User created successfully!", 'success')
             return redirect(url_for('login'))
         else:
             # If user creation failed, show an error message
