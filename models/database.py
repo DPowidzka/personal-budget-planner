@@ -140,13 +140,13 @@ class BudgetDatabase:
             print(f"Błąd podczas pobierania kategorii: {e}")
             return []
 
-    def add_savings(self, goal_name, goal_amount, target_date):
+    def add_savings(self, goal_name, goal_amount, target_date, user_id):
         query = """
             INSERT INTO savings_goals (goal_name, goal_amount, target_date, user_id)
             VALUES (%s, %s, %s, %s)
         """
         try:
-            self.cursor.execute(query, (goal_name, goal_amount, target_date, session['user_id']))
+            self.cursor.execute(query, (goal_name, goal_amount, target_date, user_id))
             self.connection.commit()
             return True
         except Exception as e:
@@ -154,16 +154,78 @@ class BudgetDatabase:
             self.connection.rollback()
             return False
 
-    def get_savings_goal(self):
-        """Fetch savings goals from the database."""
+    def get_savings_goal(self, user_id):
         query = """
-        SELECT goal_name, goal_amount, saved_amountFROM savings_goals"""
+            SELECT id, goal_name, goal_amount, saved_amount
+            FROM savings_goals
+            WHERE user_id = %s
+        """
         try:
-            self.cursor.execute(query)
+            self.cursor.execute(query, (user_id,))
             return self.cursor.fetchall()
         except Exception as e:
             print(f"Błąd przy pobieraniu danych: {e}")
             return []
+
+    def add_contribution(self, goal_id, amount):
+        try:
+            self.cursor.execute(
+                "INSERT INTO contributions (goal_id, amount) VALUES (%s, %s)",
+                (goal_id, amount),
+            )
+            self.cursor.execute(
+                "UPDATE savings_goals SET saved_amount = saved_amount + %s WHERE goal_id = %s",
+                (amount, goal_id),
+            )
+            self.connection.commit()
+            return True
+        except Exception as e:
+            print(f"Error adding contribution: {e}")
+            self.connection.rollback()
+            return False
+
+
+    def update_saved_amount(self, id, new_saved_amount):
+        """Update the saved_amount for a specific goal."""
+        query = """
+            UPDATE savings_goals
+            SET saved_amount = %s
+            WHERE id = %s
+        """
+        try:
+            self.cursor.execute(query, (new_saved_amount, id))
+            self.connection.commit()
+        except Exception as e:
+            print(f"Error updating saved_amount: {e}")
+            self.connection.rollback()
+
+
+    def get_savings_goal_by_id(self, id, user_id):
+        """Fetch a savings goal by its id and user_id."""
+        query = """
+            SELECT * FROM savings_goals
+            WHERE id = %s AND user_id = %s
+        """
+        self.cursor.execute(query, (id, user_id))
+        result = self.cursor.fetchone()
+        return result
+
+
+    def update_savings_goal(self, id, goal_name, goal_amount, target_date):
+        """Update the savings goal."""
+        query = """
+        UPDATE savings_goals
+        SET goal_name = %s, goal_amount = %s, target_date = %s
+        WHERE id = %s
+        """
+        try:
+            self.cursor.execute(query, (goal_name, goal_amount, target_date, id))
+            self.connection.commit()
+            return True
+        except Exception as e:
+            print(f"Error updating savings goal: {e}")
+            self.connection.rollback()
+            return False
 
 
     def close(self):
