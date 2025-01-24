@@ -167,9 +167,25 @@ CREATE TABLE savings_goals (
     id INT AUTO_INCREMENT PRIMARY KEY,
     goal_name VARCHAR(255) NOT NULL,
     goal_amount DECIMAL(10, 2) NOT NULL,
-    saved_amount DECIMAL(10, 2) DEFAULT 0
+    saved_amount DECIMAL(10, 2) DEFAULT 0,
     target_date DATE NOT NULL,
     user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE contributions (
+    contribution_id INT AUTO_INCREMENT PRIMARY KEY,
+    goal_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    contribution_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (goal_id) REFERENCES savings_goals(goal_id)
+);
+
+--Expenses--
+CREATE TABLE expenses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category VARCHAR(255) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
