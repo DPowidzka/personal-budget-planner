@@ -410,7 +410,7 @@ form .form-control {
 .add-transaction-button {
     background-color: #fca311;
     border-color: #fca311;
-    color: white;
+    color: red;
 }
 
 .add-transaction-button:hover {
