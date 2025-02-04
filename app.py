@@ -77,8 +77,13 @@ def dashboard():
         return redirect(url_for('login'))
 
     user_id = session['user_id']
-    savings_goals = db.get_savings_goal(user_id)  # Fetch savings goals
+    # Username from db
+    db.cursor.execute("SELECT username FROM users WHERE id = %s", (user_id,))
+    user = db.cursor.fetchone()
 
+    user_name = user['username'] if user else "User"
+
+    savings_goals = db.get_savings_goal(user_id)  #
     # Calculate progress for each goal
     for goal in savings_goals:
         if goal['goal_amount'] > 0:
@@ -86,7 +91,7 @@ def dashboard():
         else:
             goal['progress'] = 0
 
-    return render_template('dashboard.html', savings_goals=savings_goals)
+    return render_template('dashboard.html', user_name=user_name, savings_goals=savings_goals)
 
 
 # Transactions route
@@ -301,7 +306,7 @@ def update_savings_goal(id):
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)  # Log out by clearing the session
+    session.pop('user_id', None)  # Clear session to log out the user
     flash("You have been logged out.", 'info')
     return redirect(url_for('login'))
 

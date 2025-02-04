@@ -178,7 +178,7 @@ CREATE TABLE contributions (
     goal_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     contribution_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (goal_id) REFERENCES savings_goals(goal_id)
+    FOREIGN KEY (goal_id) REFERENCES savings_goals(id)
 );
 
 --Expenses--
