@@ -381,3 +381,68 @@ form .form-control {
 	background-color: #f8f9fa;
 	margin: 0;
 }
+
+/* Transaction Page Styles */
+.search-bar {
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+}
+
+.filter-dropdown {
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+.apply-button {
+    background-color: #023047;
+    border-color: #023047;
+    color: white;
+}
+
+.apply-button:hover {
+    background-color: #03506f;
+    border-color: #03506f;
+}
+
+.add-transaction-button {
+    background-color: #fca311;
+    border-color: #fca311;
+    color: white;
+}
+
+.add-transaction-button:hover {
+    background-color: #d98c0a;
+    border-color: #d98c0a;
+}
+
+.transaction-form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+}
+
+.input-field {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 15px;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+.transaction-submit {
+    background-color: #fca311;
+    border-color: #fca311;
+    color: white;
+}
+
+.transaction-submit:hover {
+    background-color: #d98c0a;
+    border-color: #d98c0a;
+}
