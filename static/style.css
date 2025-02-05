@@ -192,40 +192,29 @@ body {
 
 /* Sidebar */
 .sidebar {
-	display: flex;
-	flex-direction: column;
 	background-color: #f8f9fa;
 	color: #14213d;
 	border-right: 1px solid #ddd;
 	height: 100vh;
-	width: 250px;
-	padding: 15px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	max-width: 250px;
+	flex: 0 0 250px;
+	box-sizing: border-box;
 }
-
 .sidebar .logo {
 	font-size: 1.5rem;
 	font-weight: bold;
-	margin-bottom: 15px;
+	margin-bottom: 20px;
 }
 
 .sidebar ul {
-	flex-grow: 1;
+	list-style: none;
+	padding: 0;
 }
 
-.sidebar .mt-auto {
-	margin-top: auto;
-}
-
-.sidebar .nav-link.text-danger {
-	font-weight: bold;
-}
-
-.sidebar .nav-link.text-danger:hover {
-	background-color: rgba(255, 0, 0, 0.1);
-	border-radius: 5px;
-}
 .sidebar ul li {
-	margin: 10px 0;
+	margin: 15px 0;
 }
 
 .sidebar ul li a {
@@ -391,69 +380,4 @@ form .form-control {
 	min-height: 100vh;
 	background-color: #f8f9fa;
 	margin: 0;
-}
-
-/* Transaction Page Styles */
-.search-bar {
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-}
-
-.filter-dropdown {
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 1rem;
-}
-
-.apply-button {
-    background-color: #023047;
-    border-color: #023047;
-    color: white;
-}
-
-.apply-button:hover {
-    background-color: #03506f;
-    border-color: #03506f;
-}
-
-.add-transaction-button {
-    background-color: #fca311;
-    border-color: #fca311;
-    color: red;
-}
-
-.add-transaction-button:hover {
-    background-color: #d98c0a;
-    border-color: #d98c0a;
-}
-
-.transaction-form-container {
-    background: white;
-    padding: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    width: 100%;
-    margin: auto;
-}
-
-.input-field {
-    height: 40px;
-    line-height: 40px;
-    padding: 0 15px;
-    font-size: 1rem;
-    border-radius: 5px;
-}
-
-.transaction-submit {
-    background-color: #fca311;
-    border-color: #fca311;
-    color: white;
-}
-
-.transaction-submit:hover {
-    background-color: #d98c0a;
-    border-color: #d98c0a;
 }
