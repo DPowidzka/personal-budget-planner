@@ -52,113 +52,113 @@
 
     <!-- Bottom Section -->
     <div class="row mt-4">
-        <!-- Recent Transactions Section -->
+        <!-- Recent Transactions Section - Same Width as Financial Insights (col-lg-8) -->
         <div class="col-lg-8">
             <div class="recent-transactions p-3 rounded bg-white shadow">
                 <h4 class="mb-3">Recent Transactions</h4>
-                <table class="table table-borderless">
+                <table class="table table-sm table-borderless">
                     <thead>
                         <tr>
-                            <th style="text-align: left;">Name</th>
                             <th style="text-align: left;">Date</th>
+                            <th style="text-align: left;">Name</th>
+                            <th style="text-align: left;">Category</th>
                             <th style="text-align: left;">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% if recent_transactions %}
+                        {% for transaction in recent_transactions %}
                         <tr>
-                            <td>
-                                <i class="bi bi-play-btn text-danger me-2"></i>Netflix
+                            <td>{{ transaction.transaction_date }}</td>
+                            <td>{{ transaction.description }}</td>
+                            <td>{{ transaction.category_name }}</td>
+                            <td class="{% if transaction.amount < 0 %}text-danger{% else %}text-success{% endif %}">
+                                ${{ transaction.amount }}
                             </td>
-                            <td>2024-12-20</td>
-                            <td class="text-danger">-$12.99</td>
                         </tr>
+                        {% endfor %}
+                        {% else %}
                         <tr>
-                            <td>
-                                <i class="bi bi-cup-straw text-warning me-2"></i>Starbucks
-                            </td>
-                            <td>2024-12-21</td>
-                            <td class="text-danger">-$5.45</td>
+                            <td colspan="4" class="text-center">No recent transactions found</td>
                         </tr>
-                        <tr>
-                            <td>
-                                <i class="bi bi-house text-success me-2"></i>Rent
-                            </td>
-                            <td>2024-12-01</td>
-                            <td class="text-danger">-$1500.00</td>
-                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- Savings Section -->
         <div class="col-lg-4">
             <div class="savings p-3 rounded bg-white shadow">
                 <h4 class="mb-3">Savings</h4>
                 {% for goal in savings_goals %}
-                <div class="saving-item mb-3">
-                    <div class="d-flex align-items-center">
-                        <i
-                            class="bi bi-briefcase-fill {% if goal.goal_name == 'Retirement' %}text-primary{% elif goal.goal_name == 'Emergency' %}text-danger{% else %}text-warning{% endif %} me-2"></i>
-                        <div class="w-100">
-                            <h6 class="mb-1">{{ goal.goal_name }} <span class="float-end">{{ goal.progress|round(0)
-                                    }}%</span></h6>
-                            <div class="progress">
-                                <div class="progress-bar {% if goal.progress < 50 %}bg-danger{% elif goal.progress < 75 %}bg-warning{% else %}bg-success{% endif %}"
-                                    role="progressbar" style="width: {{ goal.progress|round(0) }}%;"
-                                    aria-valuenow="{{ goal.progress|round(0) }}" aria-valuemin="0" aria-valuemax="100">
-                                </div>
-                            </div>
-                            <small class="text-muted">${{ goal.saved_amount }} collected of ${{ goal.goal_amount
-                                }}</small>
+                <div class="saving-item mb-2">
+                    <h6 class="mb-1">{{ goal.goal_name }}
+                        <span class="float-end">
+                            {% if goal.progress is not none %}
+                            {{ goal.progress|round(0) }}%
+                            {% else %}
+                            0%
+                            {% endif %}
+                        </span>
+                    </h6>
+                    <div class="progress">
+                        <div class="progress-bar {% if goal.progress < 50 %}bg-danger{% elif goal.progress < 75 %}bg-warning{% else %}bg-success{% endif %}"
+                            role="progressbar" style="width: {{ goal.progress|round(0) }}%;"
+                            aria-valuenow="{{ goal.progress|round(0) }}" aria-valuemin="0" aria-valuemax="100">
                         </div>
                     </div>
+                    <small class="text-muted">${{ goal.saved_amount }} of ${{ goal.goal_amount }}</small>
                 </div>
                 {% else %}
                 <p>No savings goals found.</p>
                 {% endfor %}
             </div>
         </div>
+    </div>
 
-        <!-- Include Chart.js -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        <!-- Custom JavaScript -->
-        <script>
-            // Histogram
-            const ctxHistogram = document.getElementById('monthlyHistogram').getContext('2d');
-            new Chart(ctxHistogram, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Income',
-                        data: [3000, 3200, 2900, 3100, 2800, 3300, 3000, 3100, 3200, 3100, 3000, 3200],
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                    }, {
-                        label: 'Expenses',
-                        data: [2500, 2700, 2600, 2800, 2700, 2900, 2600, 2800, 2700, 2900, 2600, 2800],
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                }
-            });
 
-            // Pie Chart
-            const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
-            new Chart(ctxPie, {
-                type: 'pie',
-                data: {
-                    labels: ['Groceries', 'Education', 'Housing', 'Transport', 'Entertainment'],
-                    datasets: [{
-                        data: [1200, 800, 1500, 500, 300],
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                }
-            });
-        </script>
-        {% endblock %}
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Histogram
+        const ctxHistogram = document.getElementById('monthlyHistogram').getContext('2d');
+        new Chart(ctxHistogram, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Income',
+                    data: [3000, 3200, 2900, 3100, 2800, 3300, 3000, 3100, 3200, 3100, 3000, 3200],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }, {
+                    label: 'Expenses',
+                    data: [2500, 2700, 2600, 2800, 2700, 2900, 2600, 2800, 2700, 2900, 2600, 2800],
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                }]
+            },
+            options: {
+                responsive: true,
+            }
+        });
+
+        // Pie Chart
+        const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Groceries', 'Education', 'Housing', 'Transport', 'Entertainment'],
+                datasets: [{
+                    data: [1200, 800, 1500, 500, 300],
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                }]
+            },
+            options: {
+                responsive: true,
+            }
+        });
+    </script>
+    {% endblock %}

@@ -77,33 +77,57 @@ def dashboard():
         return redirect(url_for('login'))
 
     user_id = session['user_id']
-    # Username from db
+
+    # Fetch user's name
     db.cursor.execute("SELECT username FROM users WHERE id = %s", (user_id,))
     user = db.cursor.fetchone()
-
     user_name = user['username'] if user else "User"
 
-    savings_goals = db.get_savings_goal(user_id)  #
-    # Calculate progress for each goal
+    # Fetch savings goals
+    savings_goals = db.get_savings_goal(user_id)
+
+    # Ensure `progress` is always defined
     for goal in savings_goals:
         if goal['goal_amount'] > 0:
             goal['progress'] = (goal['saved_amount'] / goal['goal_amount']) * 100
         else:
-            goal['progress'] = 0
+            goal['progress'] = 0  # Default to 0% if no valid goal amount
 
-    return render_template('dashboard.html', user_name=user_name, savings_goals=savings_goals)
+    # Fetch last 5 transactions
+    recent_transactions = db.get_recent_transactions(user_id, limit=10)
+
+    return render_template('dashboard.html', user_name=user_name, savings_goals=savings_goals, recent_transactions=recent_transactions)
+
+
+
 
 
 # Transactions route
-@app.route('/transactions')
+@app.route('/transactions', methods=['GET', 'POST'])
 def transactions():
     if 'user_id' not in session:
         flash("You must log in to access this page.", 'warning')
         return redirect(url_for('login'))
 
-    # Fetch all transactions
-    transactions = db.get_all_transactions()
-    return render_template('transactions.html', transactions=transactions)
+    user_id = session['user_id']
+
+    # Search criteria
+    search_query = request.args.get('search', '')
+    category = request.args.get('category', '')
+    start_date = request.args.get('start_date', '')
+    end_date = request.args.get('end_date', '')
+
+    # Fetch transactions based on criteria
+    transactions = db.search_transactions(
+    start_date=start_date if start_date else None,
+    end_date=end_date if end_date else None,
+    category_id=category if category else None,
+    search_query=search_query if search_query else None
+    )
+
+
+    return render_template('transactions.html', transactions=transactions, search=search_query, category=category)
+
 
 # Add transaction route
 @app.route('/add-transaction', methods=['GET', 'POST'])
@@ -113,7 +137,6 @@ def add_transaction():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        # Extract form data
         account_id = request.form.get('account_id')
         category_id = request.form.get('category_id')
         transaction_type_id = request.form.get('transaction_type_id')
@@ -125,7 +148,7 @@ def add_transaction():
             return redirect(url_for('add_transaction'))
 
         try:
-            amount = float(amount)  # Convert amount to float
+            amount = float(amount)
         except ValueError:
             flash("Invalid amount.", 'danger')
             return redirect(url_for('add_transaction'))
@@ -143,6 +166,8 @@ def add_transaction():
     accounts = db.get_all_accounts()
     categories = db.get_all_categories()
     return render_template('add_transaction.html', accounts=accounts, categories=categories)
+
+
 
 @app.route('/add-expense', methods=['GET','POST'])
 def add_expense():

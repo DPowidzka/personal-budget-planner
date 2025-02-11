@@ -79,9 +79,8 @@ class BudgetDatabase:
             print(f"Błąd podczas pobierania salda: {e}")
             return None
 
-    def search_transactions(self, start_date=None, end_date=None,
-                          category_id=None, min_amount=None):
-        """Wyszukuje transakcje według określonych kryteriów"""
+    def search_transactions(self, start_date=None, end_date=None, category_id=None, search_query=None, min_amount=None):
+        """Search transactions based on filters."""
         try:
             conditions = []
             values = []
@@ -94,15 +93,22 @@ class BudgetDatabase:
                 WHERE 1=1
             """
 
+            if search_query:
+                conditions.append("t.description LIKE %s")
+                values.append(f"%{search_query}%")  # Partial match search
+
             if start_date:
                 conditions.append("t.transaction_date >= %s")
                 values.append(start_date)
+
             if end_date:
                 conditions.append("t.transaction_date <= %s")
                 values.append(end_date)
+
             if category_id:
                 conditions.append("t.category_id = %s")
                 values.append(category_id)
+
             if min_amount:
                 conditions.append("t.amount >= %s")
                 values.append(min_amount)
@@ -110,11 +116,35 @@ class BudgetDatabase:
             if conditions:
                 query += " AND " + " AND ".join(conditions)
 
+            query += " ORDER BY t.transaction_date DESC"
+
             self.cursor.execute(query, tuple(values))
             return self.cursor.fetchall()
         except Error as e:
-            print(f"Błąd podczas wyszukiwania transakcji: {e}")
+            print(f"Error during transaction search: {e}")
             return []
+
+    def get_recent_transactions(self, user_id, limit=10):
+        """Fetch the most recent transactions for a user's accounts"""
+        try:
+            query = """
+                SELECT t.transaction_date, t.amount, t.description, c.name AS category_name
+                FROM transactions t
+                JOIN categories c ON t.category_id = c.category_id
+                JOIN accounts a ON t.account_id = a.account_id
+                WHERE a.account_id IN (
+                    SELECT account_id FROM accounts
+                )
+                ORDER BY t.transaction_date DESC
+                LIMIT %s
+            """
+            self.cursor.execute(query, (limit,))
+            return self.cursor.fetchall()
+        except Error as e:
+            print(f"Error fetching recent transactions: {e}")
+            return []
+
+
 
     def get_all_accounts(self):
         """Fetch all accounts with their balances"""

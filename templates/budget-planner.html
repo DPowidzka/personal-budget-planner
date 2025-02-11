@@ -5,12 +5,12 @@
 {% block content %}
 <div class="container">
     <h2 class="content-title">Budget Planner</h2>
-    <p>Plan your budget effectively by tracking your profits, expenses, savings..</p>
+    <p>Plan your budget effectively by tracking your profits, expenses, and savings.</p>
 
-    <!-- Add Profit, Expenses, and Savings in a Row -->
+    <!-- Upper Row: Profit & Expenses -->
     <div class="row">
         <!-- Add Profit Section -->
-        <div class="col-12 col-md-4 mb-4">
+        <div class="col-12 col-md-6 mb-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Add Profit</h5>
@@ -28,7 +28,7 @@
         </div>
 
         <!-- Add Planned Expenses Section -->
-        <div class="col-12 col-md-4 mb-4">
+        <div class="col-12 col-md-6 mb-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Add Planned Expenses</h5>
@@ -50,56 +50,42 @@
                 </div>
             </div>
         </div>
-
-        <!-- Add Savings Section -->
-        <div class="col-12 col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Add Savings</h5>
-                    <form action="/add-savings" method="POST">
-                        <div class="d-flex flex-column">
-                            <input type="number" name="savings" id="savings-amount" class="form-control"
-                                placeholder="Enter the amount to save" required>
-                            <input type="text" name="goal" id="savings-goal" class="form-control mt-2"
-                                placeholder="Enter the savings goal" required>
-                            <button type="submit" class="btn btn-primary mt-3">Add Savings</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Monthly Overview and Trends Section -->
-    <div class="card mt-4">
-        <div class="card-body">
-            <h5 class="card-title">Monthly Budget Overview</h5>
-            <p>Here’s a quick overview of your planned budget, actual profits, and expenses:</p>
+    <!-- Lower Row: Monthly Overview -->
+    <div class="row mt-2">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Monthly Budget Overview</h5>
+                    <p>Here’s a quick overview of your planned budget, actual profits, and expenses:</p>
 
-            <div class="d-flex justify-content-between">
-                <div class="d-flex flex-column">
-                    <h6>Total Profits</h6>
-                    <p class="h4">$0</p>
-                </div>
-                <div class="d-flex flex-column">
-                    <h6>Total Expenses</h6>
-                    <p class="h4">$0</p>
-                </div>
-                <div class="d-flex flex-column">
-                    <h6>Savings</h6>
-                    <p class="h4">$0</p>
-                </div>
-            </div>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex flex-column">
+                            <h6>Total Profits</h6>
+                            <p class="h4">$0</p>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <h6>Total Expenses</h6>
+                            <p class="h4">$0</p>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <h6>Savings</h6>
+                            <p class="h4">$0</p>
+                        </div>
+                    </div>
 
-            <!-- Graphs and Charts for Financial Trends -->
-            <div class="insights-chart mt-4">
-                <h5>Expense vs. Profit Trend</h5>
-                <!-- Example Graph Placeholder -->
-                <div class="pie-chart" style="height: 300px;">
-                    <p>Graph will be here</p>
+                    <!-- Graphs and Charts for Financial Trends -->
+                    <div class="insights-chart mt-4">
+                        <h5>Expense vs. Profit Trend</h5>
+                        <div class="pie-chart" style="height: 300px;">
+                            <p>Graph will be here</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
